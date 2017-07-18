@@ -1,30 +1,13 @@
- 2068  pulseaudio -k
- 2069  top
- 2070  pactl load-module module-loopback 
- 2071  pactl unload-module 22
  2072  pactl load-module module-null-sink sink_name="VirtualMic" sink_properties=device.description="VirtualMic"
  2073  pactl load-module module-null-sink sink_name="FirefoxOutput" sink_properties=device.description="FirefoxOutput"
  2074  pactl load-module module-null-sink sink_name="MicOutput" sink_properties=device.description="MicOutput"
- 2075  pactl load-module module-loopback source="FirefoxOutput.monitor" sink=
  2076  pacmd dump | mawk '/set-default-sink/ {print $2}
-'
  2077  pactl load-module module-loopback source="FirefoxOutput.monitor" sink="alsa_output.usb-Kingston_HyperX_7.1_Audio_00000000-00.analog-stereo"
  2078  pactl load-module module-loopback source="FirefoxOutput.monitor" sink="VirtualMic"
  2079  pactl load-module module-loopback source="MicOutput.monitor" sink="VirtualMic"
- 2080  pactl list short clients |mawk -v clientName=$1 'tolower($3) ~ clientName {print $1}'
- 2081  pactl list short clients
- 2082  pactl list short clients |mawk -v clientName=$1 'tolower($3) ~ clientName {print $1}'
- 2083  pactl list short clients
- 2084  man mawk
  2085  pactl list short clients |mawk -v clientName=$1 'tolower($3) ~ clientName {print $3}'
  2086  pactl list short sinks
  2087  pactl list short sink-inputs
- 2088  pactl list sink-inputs
  2089  pactl move-sink-input 12 4
- 2090  pactl list sink-inputs
- 2091  pactl list short sink-inputs
- 2092  pactl list short sinks
  2093  pactl move-sink-input 14 4
  2094  pactl load-module module-loopback sink="VirtualMic"
- 2095  history
- 2096  history > workingSolution

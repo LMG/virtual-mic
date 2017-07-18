@@ -5,7 +5,15 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 const Webkit = imports.gi.WebKit;
 
-const VirtualMic = new 
+
+// A virtual Microphone:
+// It has a name, a list of sources of sound (which are null sinks monitors)
+// and one null sink that is its output
+const VirtualMic = new Lang.Class({
+    Name: 'VirtualMic 1',
+    Sources: ['test'],
+    sink: 25
+});
 
 const Application = new Lang.Class({
     Name: 'MixMic',
@@ -15,6 +23,7 @@ const Application = new Lang.Class({
         
         this.application.connect('activate', Lang.bind(this, this._onActivate));
         this.application.connect('startup', Lang.bind(this, this._onStartup));
+        this.virtualMic = new VirtualMic();
     },
     
     _buildUI: function() {
@@ -31,11 +40,11 @@ const Application = new Lang.Class({
         this._sidebar = new Gtk.StackSidebar();
         this._stack = new Gtk.Stack();
         // labels in sidebar
-        this._label = new Gtk.Label({label: "Virtual mic 1"});
+        this._label = new Gtk.Label({label: this.virtualMic.Sources[0]});
         
         this._stack.add_titled(this._label, "1", "test");
-        this._stack.set_vexpand(true);
-        this._stack.set_hexpand(true);
+        this._sidebar.set_vexpand(true);
+        this._sidebar.set_hexpand(true);
         
         this._sidebar.set_stack(this._stack);
         
