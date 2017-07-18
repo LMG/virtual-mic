@@ -5,6 +5,8 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 const Webkit = imports.gi.WebKit;
 
+const VirtualMic = new 
+
 const Application = new Lang.Class({
     Name: 'MixMic',
     
@@ -25,20 +27,24 @@ const Application = new Lang.Class({
             border_width: 10,
             window_position: Gtk.WindowPosition.CENTER });
         
-        //this._image = new Gtk.Image({file:"logo.png"});
-        this._label = new Gtk.Label({label:"Mix your Mics !"});
+        // Sidebar
+        this._sidebar = new Gtk.StackSidebar();
+        this._stack = new Gtk.Stack();
+        // labels in sidebar
+        this._label = new Gtk.Label({label: "Virtual mic 1"});
         
-        // Webview
-        this._webView = new Webkit.WebView();
-        this._webView.load_uri(GLib.filename_to_uri(GLib.get_current_dir()
-            + "/mixmic.html", null));
+        this._stack.add_titled(this._label, "1", "test");
+        this._stack.set_vexpand(true);
+        this._stack.set_hexpand(true);
         
+        this._sidebar.set_stack(this._stack);
+        
+                
         // Grid
         this._grid = new Gtk.Grid({
             row_spacing: 20
         });
-        this._grid.attach(this._label, 0, 0, 1, 1);
-        this._grid.attach(this._webView, 0, 1, 1, 1);
+        this._grid.attach(this._sidebar, 0, 0, 1, 1);
         
         this._window.add(this._grid);
         
