@@ -4,8 +4,7 @@
 #Usage: ./bindApp.sh appName|PID [virtualMicId]
 # appName|PID : The name of the program to bind (listen to) or its PID
 # virtualMicId : The pulseaudio ID of the virtual mic null sink
-#Outputs:
-# The ID of the null sink
+#Outputs: (TODO)
 # The ID of the output loopback
 # [The ID of the mic loopback]
 
@@ -72,3 +71,15 @@ fi
 
 #Change the app output to the output sink
 pactl move-sink-input ${sourceId} ${outputId}
+
+#Bind to the virtual mic if we have one
+if [[ -n $2 ]] ; then
+  if [[ $2 =~ $numberExpr ]] ; then
+    ./connectToMic.sh $outputId $2
+  else
+    echo "Virtual mic needs to be a number (pulseaudio ID)"
+    exit 1
+  fi
+fi 
+
+echo $outputId
