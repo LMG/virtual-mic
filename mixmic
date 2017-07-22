@@ -11,8 +11,8 @@ const Webkit = imports.gi.WebKit;
 // and one null sink that is its output
 const VirtualMic = new Lang.Class({
     Name: 'VirtualMic 1',
-    Sources: ['test'],
-    sink: 25
+    Sources: [],
+    sink:0,
 });
 
 const Application = new Lang.Class({

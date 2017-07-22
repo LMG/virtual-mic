@@ -16,7 +16,7 @@ autom4te.cache
 config.log
 config.status
 configure
-hello-world.desktop
+mixmic.desktop
 install-sh
 missing
 Makefile.in
@@ -26,7 +26,7 @@ Running "make install", installs the application to
 
 /home/your_username/.local/bin
 
-and installs the hello-world.desktop file to 
+and installs the mixmic.desktop file to 
 
 /home/your_username/.local/share/applications
 
@@ -42,4 +42,4 @@ To create a tarball type:
 
 make distcheck
 
-This will create hello-world-1.0.tar.xz
+This will create mixmic-1.0.tar.xz
