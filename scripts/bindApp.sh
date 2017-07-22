@@ -4,7 +4,7 @@
 #Usage: ./bindApp.sh appName|PID [virtualMicId]
 # appName|PID : The name of the program to bind (listen to) or its PID
 # virtualMicId : The pulseaudio ID of the virtual mic null sink
-#Outputs: (TODO)
+#Outputs: 
 # The ID of the output loopback
 # [The ID of the mic loopback]
 
@@ -40,6 +40,7 @@ wiring=$(pactl load-module module-loopback source="${appName}Output.monitor")
 
 if [[ -z $wiring ]] ; then
    echo "Couldn't connect sink to default output"
+   pulseaudio -k #Reset pulseaudio
    exit 1
 fi
 
@@ -53,6 +54,7 @@ sed -e 's/#//')
 
 if [[ -z $sourceId ]] ; then
     echo "Source id not found"
+    pulseaudio -k
     exit 1
 fi
 
@@ -66,6 +68,7 @@ sed -e 's/#//')
 
 if [[ -z $outputId ]] ; then
     echo "Output id not found"
+    pulseaudio -k
     exit 1
 fi
 
@@ -77,7 +80,8 @@ if [[ -n $2 ]] ; then
   if [[ $2 =~ $numberExpr ]] ; then
     ./connectToMic.sh $outputId $2
   else
-    echo "Virtual mic needs to be a number (pulseaudio ID)"
+    echo "Virtual mic needs to be a number (pulseaudio ID), please rebind
+      using correct ID"
     exit 1
   fi
 fi 
