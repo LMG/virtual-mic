@@ -8,6 +8,8 @@
 # The ID of the output loopback
 # [The ID of the mic loopback]
 
+SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P ) 
+
 #Get the name of the app and the pulseaudio ID of the source
 numberExpr=^[0-9]+$
 if [[ -z $1 ]] ; then
@@ -78,7 +80,7 @@ pactl move-sink-input ${sourceId} ${outputId}
 if [[ -n $2 ]] ; then
   echo "connecting to mic"
   if [[ $2 =~ $numberExpr ]] ; then
-    ./connectToMic.sh $outputId $2
+    $SCRIPTPATH/connectToMic.sh $outputId $2
   else
     echo "Virtual mic needs to be a number (pulseaudio ID), please rebind
       using correct ID"

@@ -162,6 +162,7 @@ const Application = new Lang.Class({
         // Execute pactl scripts
         let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/bindApp.sh ' + appPID + ' ' + mic.id);
         print("connect to mic " + appPID  + " " + mic.id);
+        print(out);
         let sinkId = out[0];
         if (status != 0) {
           throw new Error('Could not bind app : ' + out);
