@@ -30,7 +30,7 @@ and installs the mixmic.desktop file to
 
 /home/your_username/.local/share/applications
 
-You can now run the application by typing "Hello World" in the Overview.
+You can now run the application by typing "mixmic" in the Overview.
 
 ----------------
 To uninstall, type:

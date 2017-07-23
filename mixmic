@@ -11,8 +11,12 @@ const Webkit = imports.gi.WebKit;
 // and one null sink that is its output
 const VirtualMic = new Lang.Class({
     Name: 'VirtualMic 1',
-    Sources: [],
+    Sources: [0],
     sink:0,
+
+    _init: function(name){
+      this.Name = name;
+    }
 });
 
 const Application = new Lang.Class({
@@ -23,7 +27,8 @@ const Application = new Lang.Class({
         
         this.application.connect('activate', Lang.bind(this, this._onActivate));
         this.application.connect('startup', Lang.bind(this, this._onStartup));
-        this.virtualMic = new VirtualMic();
+        this._mic = [];
+        this._nbMics = 0;
     },
     
     _buildUI: function() {
@@ -38,29 +43,26 @@ const Application = new Lang.Class({
         
         // Sidebar
         this._sidebar = new Gtk.StackSidebar();
-        this._stack = new Gtk.Stack();
-        // labels in sidebar
-        this._label = new Gtk.Label({label: this.virtualMic.Sources[0]});
-        
-        this._stack.add_titled(this._label, "1", "test");
-        this._sidebar.set_vexpand(true);
-        this._sidebar.set_hexpand(true);
-        
+        this._stack = new Gtk.Stack;
+        this._stack.set_vexpand(true);
+        this._stack.set_hexpand(true);
         this._sidebar.set_stack(this._stack);
-        
                 
         // Grid
         this._grid = new Gtk.Grid({
             row_spacing: 20
         });
         this._grid.attach(this._sidebar, 0, 0, 1, 1);
+        this._grid.attach(this._stack, 1, 0, 1, 1);
         
         this._window.add(this._grid);
         
         //Header Bar
         this._window.set_titlebar(this._getHeader());
-        
         this._window.show_all();
+
+        // Add mic
+        this._addMic();
     },
     
     _onActivate: function() {
@@ -70,7 +72,20 @@ const Application = new Lang.Class({
     _onStartup: function() {
         this._buildUI();
     },
-    
+   
+    // Creates a new mic and its menu entries 
+    _addMic: function() {
+        let name = "Mic " + this._nbMics;
+
+        this._nbMics += 1;
+        this._mic[this._nbMics] = new VirtualMic(name);
+
+        // Add to sidebar
+        let label = new Gtk.Label({label: name});
+        this._stack.add_titled(label, name, name);
+
+        label.show();
+    },
     
     // Creates the header bar with a button to add a virtual mic
     _getHeader: function() {
@@ -91,13 +106,14 @@ const Application = new Lang.Class({
         });
         
         buttonAdd = new Gtk.Button({ image: imageAdd });
-        buttonAdd.connect('clicked', null);
+        buttonAdd.connect('clicked', Lang.bind(this, this._addMic));
         
         headerStart.attach(buttonAdd, 0, 0, 1, 1);
         headerBar.pack_start(headerStart);
         
         return headerBar;
-    }
+    },
+
 });
 
 let app = new Application();
