@@ -12,17 +12,19 @@ const Webkit = imports.gi.WebKit;
 // and one null sink that is its output
 const VirtualMic = new Lang.Class({
     Name: 'VirtualMic 1',
-    Sources: [0],
+    Sources: [],
     id:0,
 
     _init: function(name){
       this.Name = name;
-    }
+      this.Sources = [];
+    },
+
 });
 
 const Application = new Lang.Class({
     Name: 'MixMic',
-    
+
     _init: function() {
         this.application = new Gtk.Application();
         
@@ -86,6 +88,7 @@ const Application = new Lang.Class({
         let label = new Gtk.Label({label: "Connected sources"});
         let newSource = new Gtk.Button({label: "Add source"});
         newSource.valign = Gtk.Align.BASELINE;
+        newSource.connect('clicked', Lang.bind(this, this._addSource, this._nbMics));
 
         let content = new Gtk.Box({
           orientation: Gtk.Orientation.VERTICAL,
@@ -106,7 +109,72 @@ const Application = new Lang.Class({
           throw new Error('Could not get mic id');
         }
     },
-    
+
+    // Adds a source to the mic
+    _addSource: function(widget, micID) {
+      
+        // Create window
+        let popup = new Gtk.Window({
+          title: "Sources",
+          height_request: 200,
+          width_request: 200,
+          window_position: Gtk.WindowPosition.CENTER
+        });
+        let content = new Gtk.Box({
+          orientation: Gtk.Orientation.VERTICAL,
+          spacing: 50,
+        });
+        popup.add(content);
+
+        // Add list
+        let listBox = new Gtk.ListBox();
+        listBox.selection_mode = Gtk.SelectionMode.SINGLE;
+        content.pack_start(listBox, true, true, 0);
+
+        // Display app list
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/listApps.sh');
+        let list = (""+out).split("\n");
+        for(let i = 0; i<list.length/2; i+=2)
+        {
+          let row = new Gtk.ListBoxRow();
+          let label = new Gtk.Label({label: "" + list[i]});
+          row.add(label);
+          listBox.add(row);
+        }
+        listBox.show_all();
+        content.show_all();
+        popup.show_all();
+
+        // Add selected app to the mic
+        listBox.connect("row-activated", Lang.bind(this, this._bindApp, list, this._mic[micID], popup));
+    },
+
+    _bindApp: function(widget, row, list, mic, popup) {
+        // Add app to the mic object
+        let appName = list[2*row.get_index()];
+        let appPID = list[2*row.get_index()+1];
+        print(appName + " " + appPID);
+        mic.Sources[mic.Sources.length]=appName;
+        popup.close();
+
+        // List app in the view
+
+        // Execute pactl scripts
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/bindApp.sh ' + appPID + ' ' + mic.id);
+        print("connect to mic " + appPID  + " " + mic.id);
+        let sinkId = out[0];
+        if (status != 0) {
+          throw new Error('Could not bind app : ' + out);
+        } else {
+         // print("connect to mic " + sinkId  + " " + mic.id);
+         // let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/connectToMic.sh ' + sinkId + ' ' + mic.id);
+         // print(res, out, err, status);
+         // if (status != 0) {
+         //   throw new Error('Could not connect to mic : ' + err + '(output:' + out + ')');
+         // }
+        }
+    },
+
     // Creates the header bar with a button to add a virtual mic
     _getHeader: function() {
         let headerBar, headerStart, imageAdd, buttonAdd;

@@ -8,6 +8,10 @@
 #Outputs:
 
 #Get name of appOutput 
+if [[ -z $1 || -z $2 ]] ; then
+    echo "Usage: ./connectToMic.sh appOutputId virtualMicId"
+    exit 1
+fi
 outputId=$1
 outputName=$(
 pactl list short sinks |

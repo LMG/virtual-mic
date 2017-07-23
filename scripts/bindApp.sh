@@ -9,12 +9,11 @@
 # [The ID of the mic loopback]
 
 #Get the name of the app and the pulseaudio ID of the source
-numberExpr="^[0-9]+$"
+numberExpr=^[0-9]+$
 if [[ -z $1 ]] ; then
     echo "Usage: ./bindApp.sh appName|PID [virtualMicID]"
     exit 1
-elif [[ $1 =~ numberExpr ]] ; then
-    echo "a number"
+elif [[ $1 =~ $numberExpr ]] ; then
     appName=$(ps -p $1 -o comm=)
     pid=$1
 else
@@ -77,6 +76,7 @@ pactl move-sink-input ${sourceId} ${outputId}
 
 #Bind to the virtual mic if we have one
 if [[ -n $2 ]] ; then
+  echo "connecting to mic"
   if [[ $2 =~ $numberExpr ]] ; then
     ./connectToMic.sh $outputId $2
   else
