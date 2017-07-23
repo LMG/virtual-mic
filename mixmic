@@ -1,6 +1,7 @@
 #!/usr/bin/gjs
 
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 const Webkit = imports.gi.WebKit;
@@ -12,7 +13,7 @@ const Webkit = imports.gi.WebKit;
 const VirtualMic = new Lang.Class({
     Name: 'VirtualMic 1',
     Sources: [0],
-    sink:0,
+    id:0,
 
     _init: function(name){
       this.Name = name;
@@ -77,14 +78,33 @@ const Application = new Lang.Class({
     _addMic: function() {
         let name = "Mic " + this._nbMics;
 
+        // Create the mic object
         this._nbMics += 1;
         this._mic[this._nbMics] = new VirtualMic(name);
 
-        // Add to sidebar
-        let label = new Gtk.Label({label: name});
-        this._stack.add_titled(label, name, name);
+        // Build the mic UI
+        let label = new Gtk.Label({label: "Connected sources"});
+        let newSource = new Gtk.Button({label: "Add source"});
+        newSource.valign = Gtk.Align.BASELINE;
 
-        label.show();
+        let content = new Gtk.Box({
+          orientation: Gtk.Orientation.VERTICAL,
+          spacing: 50,
+        });
+        content.pack_start(label, true, true, 0);
+        content.pack_end(newSource, false, false, 0);
+
+        // Add to sidebar
+        this._stack.add_titled(content, name, name);
+        content.show_all();
+
+        // Run creation script
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/createMic.sh "' + name + '"');
+        if (status == 0) {
+          this._mic[this._nbMics].id = out;
+        } else {
+          throw new Error('Could not get mic id');
+        }
     },
     
     // Creates the header bar with a button to add a virtual mic
