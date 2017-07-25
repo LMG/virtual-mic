@@ -4,8 +4,6 @@ const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
-const Webkit = imports.gi.WebKit;
-
 
 // A virtual Microphone:
 // It has a name, a list of sources of sound (which are null sinks monitors)
@@ -153,7 +151,6 @@ const Application = new Lang.Class({
         // Add app to the mic object
         let appName = list[2*row.get_index()];
         let appPID = list[2*row.get_index()+1];
-        print(appName + " " + appPID);
         mic.Sources[mic.Sources.length]=appName;
         popup.close();
 
@@ -161,18 +158,9 @@ const Application = new Lang.Class({
 
         // Execute pactl scripts
         let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/bindApp.sh ' + appPID + ' ' + mic.id);
-        print("connect to mic " + appPID  + " " + mic.id);
-        print(out);
         let sinkId = out[0];
         if (status != 0) {
           throw new Error('Could not bind app : ' + out);
-        } else {
-         // print("connect to mic " + sinkId  + " " + mic.id);
-         // let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/connectToMic.sh ' + sinkId + ' ' + mic.id);
-         // print(res, out, err, status);
-         // if (status != 0) {
-         //   throw new Error('Could not connect to mic : ' + err + '(output:' + out + ')');
-         // }
         }
     },
 
