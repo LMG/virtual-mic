@@ -5,8 +5,9 @@
 #Outputs: the id of the sink
 
 #Create mic
-micNum=$(pactl load-module module-null-sink sink_name=${1:-"VirtualMic"}\
-     sink_properties=device.description=${1:-"VirtualMic"})
+sink_name=$(echo -e "$1" | tr -d '[:space:]')
+micNum=$(pactl load-module module-null-sink sink_name="${sink_name:-"VirtualMic"}"\
+     sink_properties=device.description="${sink_name:-"VirtualMic"}")
 
 #Get mic id
 micId=$(
