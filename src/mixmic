@@ -100,7 +100,7 @@ const Application = new Lang.Class({
         content.show_all();
 
         // Run creation script
-        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/createMic.sh "' + name + '"');
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./createMic.sh "' + name + '"');
         if (status == 0) {
           this._mic[this._nbMics].id = out;
         } else {
@@ -130,7 +130,7 @@ const Application = new Lang.Class({
         content.pack_start(listBox, true, true, 0);
 
         // Display app list
-        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/listApps.sh');
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./listApps.sh');
         let list = (""+out).split("\n");
         for(let i = 0; i<list.length/2; i+=2)
         {
@@ -157,7 +157,7 @@ const Application = new Lang.Class({
         // List app in the view
 
         // Execute pactl scripts
-        let [res, out, err, status] = GLib.spawn_command_line_sync('./scripts/bindApp.sh ' + appPID + ' ' + mic.id);
+        let [res, out, err, status] = GLib.spawn_command_line_sync('./bindApp.sh ' + appPID + ' ' + mic.id);
         let sinkId = out[0];
         if (status != 0) {
           throw new Error('Could not bind app : ' + out);

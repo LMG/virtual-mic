@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 #creates the null sink for the app as well as the loopback connection
 #Usage: ./bindApp.sh appName|PID [virtualMicId]
 # appName|PID : The name of the program to bind (listen to) or its PID
@@ -8,7 +9,7 @@
 # The ID of the output loopback
 # [The ID of the mic loopback]
 
-SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P ) 
+SCRIPTPATH="$(dirname "$(readlink -fn "$0")")"
 
 #Get the name of the app and the pulseaudio ID of the source
 numberExpr=^[0-9]+$
